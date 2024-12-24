@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: water-quality-monitoring-api
+    env: node
+    buildCommand: npm ci  # Changed from npm install to npm ci for clean install
+    startCommand: node server/start.js  # Changed to directly run the server file
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
