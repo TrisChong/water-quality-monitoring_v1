@@ -9,7 +9,7 @@ services:
         value: production
       - key: PORT
         value: 10000
-      - key: MONGODB_URI
+      - key: MONGODB_URI=mongodb+srv://wqmadmin:abcd1234ert456@cluster0.hnsxd.mongodb.net/waterquality?retryWrites=true&w=majority
         sync: false
       - key: JWT_SECRET
         sync: false
