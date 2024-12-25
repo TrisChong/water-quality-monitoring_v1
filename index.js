@@ -1,6 +1,6 @@
 import express from 'express';
-import cors from 'cors';
 import { log } from './utils/logger.js';
+import { corsMiddleware } from './middleware/cors.js';
 import authRoutes from './routes/auth.js';
 import readingsRoutes from './routes/readings.js';
 import userRoutes from './routes/users.js';
@@ -9,14 +9,10 @@ import { errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
 
-// CORS configuration - allow all origins in development
-const corsOptions = {
-  origin: '*', // Allow all origins temporarily for debugging
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-};
+// Apply CORS middleware
+app.use(corsMiddleware);
 
-app.use(cors(corsOptions));
+// Parse JSON bodies
 app.use(express.json());
 
 // API Routes

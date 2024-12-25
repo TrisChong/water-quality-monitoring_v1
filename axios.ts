@@ -1,14 +1,15 @@
 import axios from 'axios';
-import { API_ENDPOINTS, API_CONFIG } from '../../config/api';
+import { API_URL } from '../../config/constants';
 import { getToken } from '../storage/auth';
 
 const api = axios.create({
-  baseURL: API_ENDPOINTS.BASE_URL,
-  ...API_CONFIG,
-  // Remove withCredentials as it's causing CORS issues
-  withCredentials: false
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  }
 });
 
+// Request interceptor
 api.interceptors.request.use(
   (config) => {
     const token = getToken();
@@ -17,25 +18,21 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    console.error('Request error:', error);
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
+// Response interceptor
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response) {
-      // Server responded with error
-      return Promise.reject(error.response.data);
-    } else if (error.request) {
-      // Request made but no response
-      return Promise.reject({ message: 'Network error - please check your connection' });
-    } else {
-      // Request setup error
-      return Promise.reject({ message: 'Failed to make request' });
+    // Handle network errors
+    if (!error.response) {
+      return Promise.reject(new Error('Network error - please check your connection'));
     }
+    
+    // Handle API errors
+    const message = error.response.data?.message || 'An error occurred';
+    return Promise.reject(new Error(message));
   }
 );
 
