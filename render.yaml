@@ -2,14 +2,14 @@ services:
   - type: web
     name: water-quality-monitoring-api
     env: node
-    buildCommand: npm ci  # Changed from npm install to npm ci for clean install
-    startCommand: node server/start.js  # Changed to directly run the server file
+    buildCommand: npm ci && npm run build
+    startCommand: node server/start.js
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
         value: 10000
-      - key: MONGODB_URI=mongodb+srv://wqmadmin:abcd1234ert456@cluster0.hnsxd.mongodb.net/waterquality?retryWrites=true&w=majority
-        sync: false
+      - key: MONGODB_URI
+        sync: false # Add this manually in Render dashboard
       - key: JWT_SECRET
-        sync: false
+        sync: false # Add this manually in Render dashboard
