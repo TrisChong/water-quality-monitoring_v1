@@ -9,14 +9,28 @@ import { errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
 
-// Middleware
+// CORS configuration
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://water-quality-monitoring.netlify.app'
+];
+
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
-  credentials: true
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
 app.use(express.json());
 
-// API Routes - all routes should be under /api
+// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/readings', readingsRoutes);
 app.use('/api/users', userRoutes);
