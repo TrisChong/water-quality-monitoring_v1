@@ -1,35 +1,41 @@
 import axios from 'axios';
+import { API_ENDPOINTS, API_CONFIG } from '../../config/api';
 import { getToken } from '../storage/auth';
 
-// Create axios instance with base configuration
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-  headers: {
-    'Content-Type': 'application/json'
+  baseURL: API_ENDPOINTS.BASE_URL,
+  ...API_CONFIG,
+  // Remove withCredentials as it's causing CORS issues
+  withCredentials: false
+});
+
+api.interceptors.request.use(
+  (config) => {
+    const token = getToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
   },
-  withCredentials: true // Important for CORS with credentials
-});
-
-// Request interceptor
-api.interceptors.request.use((config) => {
-  const token = getToken();
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  (error) => {
+    console.error('Request error:', error);
+    return Promise.reject(error);
   }
-  return config;
-}, (error) => {
-  return Promise.reject(error);
-});
+);
 
-// Response interceptor
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      localStorage.clear();
-      window.location.href = '/login';
+    if (error.response) {
+      // Server responded with error
+      return Promise.reject(error.response.data);
+    } else if (error.request) {
+      // Request made but no response
+      return Promise.reject({ message: 'Network error - please check your connection' });
+    } else {
+      // Request setup error
+      return Promise.reject({ message: 'Failed to make request' });
     }
-    return Promise.reject(error);
   }
 );
 
