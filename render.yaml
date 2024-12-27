@@ -1,17 +1,9 @@
 services:
   - type: web
-    name: water-quality-monitoring-api
-    env: node
+    name: water-quality-monitoring
+    env: static
     buildCommand: npm ci && npm run build
-    startCommand: node server/start.js
+    staticPublishPath: ./dist
     envVars:
-      - key: NODE_ENV
-        value: production
       - key: NODE_VERSION
         value: 18.x
-      - key: PORT
-        value: 10000
-      - key: MONGODB_URI
-        sync: false # Add this manually in Render dashboard
-      - key: JWT_SECRET
-        sync: false # Add this manually in Render dashboard
