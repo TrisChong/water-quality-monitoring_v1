@@ -1,25 +1,30 @@
-[build]
-  command = "npm run build"
-  publish = "dist"
+import express from 'express';
+import { corsMiddleware } from '../middleware/cors.js';
+import { errorHandler } from '../middleware/errorHandler.js';
+import routes from '../routes/index.js';
+import { log } from '../utils/logger.js';
 
-[[redirects]]
-  from = "/api/*"
-  to = "https://water-quality-monitoring-v1.onrender.com/api/:splat"
-  status = 200
-  force = true
-  headers = {Access-Control-Allow-Origin = "*"}
+const createApp = () => {
+  const app = express();
+  
+  // Enable CORS for all routes
+  app.use(corsMiddleware);
+  
+  // Parse JSON bodies
+  app.use(express.json());
+  
+  // Routes
+  app.use('/api', routes);
+  
+  // Health check
+  app.get('/health', (_, res) => {
+    res.json({ status: 'ok' });
+  });
+  
+  // Error handling
+  app.use(errorHandler);
+  
+  return app;
+};
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-
-[build.environment]
-  NODE_VERSION = "18"
-
-[[headers]]
-  for = "/*"
-  [headers.values]
-    Access-Control-Allow-Origin = "*"
-    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
-    Access-Control-Allow-Headers = "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+export default createApp;
