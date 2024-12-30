@@ -22,27 +22,7 @@ const AdminNavigation = () => {
             <Activity size={10} />
             <span>Dashboard</span>
           </Link>
-          <Link 
-            to="/admin/users" 
-            className={`flex items-center space-x-2 ${isActive('/admin/users')} hover:text-emerald-700`}
-          >
-            <Users size={10} />
-            <span>Users</span>
-          </Link>
-          <Link 
-            to="/admin/sensors" 
-            className={`flex items-center space-x-2 ${isActive('/admin/sensors')} hover:text-emerald-700`}
-          >
-            <Settings size={10} />
-            <span>Sensors</span>
-          </Link>
-          <Link 
-            to="/admin/profile" 
-            className={`flex items-center space-x-2 ${isActive('/admin/profile')} hover:text-emerald-700`}
-          >
-            <UserCircle size={10} />
-            <span>Profile</span>
-          </Link>
+       
           <Link 
             to="/admin/export" 
             className={`flex items-center space-x-2 ${isActive('/admin/export')} hover:text-emerald-700`}
