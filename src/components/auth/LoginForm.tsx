@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { AlertCircle } from 'lucide-react';
 
-const LoginForm = () => {
+const LoginForm: React.FC = () => {
   const [credentials, setCredentials] = useState({
     email: '',
     password: ''
@@ -19,62 +20,65 @@ const LoginForm = () => {
     
     try {
       await login(credentials.email, credentials.password);
-      // Navigation will be handled by the auth context after successful login
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Invalid email or password');
+      setError(err instanceof Error ? err.message : 'Login failed');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6">Login to Your Account</h2>
+    <div className="p-4">
+      <h2 className="text-xl font-bold mb-4">Login to Your Account</h2>
+      
       {error && (
-        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-          {error}
+        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded flex items-center gap-2">
+          <AlertCircle size={20} />
+          <span>{error}</span>
         </div>
       )}
+      
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
             Email
           </label>
           <input
             id="email"
             type="email"
-            placeholder="Enter your email"
-            className="w-full p-2 border rounded focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400"
             value={credentials.email}
             onChange={(e) => setCredentials(prev => ({...prev, email: e.target.value}))}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
             required
           />
         </div>
+
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
             Password
           </label>
           <input
             id="password"
             type="password"
-            placeholder="Enter your password"
-            className="w-full p-2 border rounded focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400"
             value={credentials.password}
             onChange={(e) => setCredentials(prev => ({...prev, password: e.target.value}))}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
             required
           />
         </div>
+
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full p-2 bg-emerald-400 text-white rounded hover:bg-emerald-500 disabled:opacity-50"
+          className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50"
         >
-          {isLoading ? 'Logging in...' : 'LOGIN'}
+          {isLoading ? 'Logging in...' : 'Login'}
         </button>
+
         <button
           type="button"
           onClick={() => navigate('/register')}
-          className="w-full p-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+          className="w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
         >
           Register New Account
         </button>
