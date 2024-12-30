@@ -2,32 +2,30 @@ import { createServer } from 'http';
 import dotenv from 'dotenv';
 import { log } from './utils/logger.js';
 import createApp from './config/app.js';
-import { configureSocket } from './config/socket.js';
-import { connectDB } from './config/db/index.js';
+import connectDB from './config/db.js';
 
 dotenv.config();
 
 const startServer = async () => {
   try {
-    log.info('Starting server...');
+    const { MONGODB_URI, PORT = 5000 } = process.env;
     
+    if (!MONGODB_URI) {
+      throw new Error('MONGODB_URI is required');
+    }
+
     // Connect to MongoDB
-    await connectDB(process.env.MONGODB_URI);
+    await connectDB(MONGODB_URI);
     
     // Create Express app
     const app = createApp();
     
     // Create HTTP server
-    const httpServer = createServer(app);
-    
-    // Configure WebSocket
-    configureSocket(httpServer);
+    const server = createServer(app);
     
     // Start server
-    const PORT = process.env.PORT || 5000;
-    httpServer.listen(PORT, () => {
+    server.listen(PORT, () => {
       log.success(`Server running on port ${PORT}`);
-      log.info(`API URL: http://localhost:${PORT}/api`);
     });
 
   } catch (error) {
