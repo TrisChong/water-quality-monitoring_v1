@@ -37,7 +37,4 @@ const readingSchema = new mongoose.Schema({
   }
 });
 
-// Add index for efficient querying
-readingSchema.index({ timestamp: -1 });
-
 export default mongoose.model('Reading', readingSchema);
