@@ -1,16 +1,14 @@
 import cors from 'cors';
-import { corsConfig } from '../config/cors.js';
 
-export const corsMiddleware = cors({
-  origin: (origin, callback) => {
-    if (!origin || corsConfig.origin.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: corsConfig.credentials,
-  methods: corsConfig.methods,
-  allowedHeaders: corsConfig.allowedHeaders,
-  exposedHeaders: corsConfig.exposedHeaders
-});
+const corsOptions = {
+  origin: [
+    'https://water-quality-monitoring.onrender.com',
+    'http://localhost:5173'
+  ],
+  credentials: false,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Content-Length', 'Content-Type']
+};
+
+export const corsMiddleware = cors(corsOptions);
