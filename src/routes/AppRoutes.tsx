@@ -5,7 +5,6 @@ import RegisterForm from '../components/auth/RegisterForm';
 import UserDashboard from '../components/dashboard/UserDashboard';
 import AdminDashboard from '../components/dashboard/AdminDashboard';
 import UserProfile from '../components/dashboard/profile/UserProfile';
-import Conclusion from '../components/pages/Conclusion';
 
 const AppRoutes = () => {
   return (
@@ -13,7 +12,6 @@ const AppRoutes = () => {
       {/* Public routes */}
       <Route path="/login" element={<LoginForm />} />
       <Route path="/register" element={<RegisterForm />} />
-      <Route path="/conclusion" element={<Conclusion />} />
 
       {/* Protected routes */}
       <Route path="/dashboard" element={<PrivateRoute><UserDashboard /></PrivateRoute>} />
