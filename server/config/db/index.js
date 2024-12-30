@@ -1,20 +1,33 @@
+import mongoose from 'mongoose';
 import { log } from '../../utils/logger.js';
-import { createConnection } from './connection.js';
 
-const connectDB = async (uri) => {
-  if (!uri) {
-    throw new Error('MongoDB URI is required');
-  }
+const CONNECTION_OPTIONS = {
+  serverSelectionTimeoutMS: 30000,
+  socketTimeoutMS: 45000,
+  connectTimeoutMS: 30000,
+  maxPoolSize: 10,
+  retryWrites: true,
+  w: 'majority'
+};
 
+export const connectDB = async (uri) => {
   try {
-    const connection = await createConnection(uri);
-    log.success(`Connected to database: ${connection.connection.name}`);
+    if (!uri) {
+      throw new Error('MongoDB URI is required');
+    }
+
+    // Ensure database name is included
+    const uriWithDB = uri.includes('waterquality') ? uri : `${uri}/waterquality`;
+
+    // Connect to MongoDB
+    const connection = await mongoose.connect(uriWithDB, CONNECTION_OPTIONS);
+    
+    log.success('MongoDB connected successfully');
+    log.info(`Connected to database: ${connection.connection.name}`);
+    
     return connection;
   } catch (error) {
-    log.error('Failed to connect to MongoDB');
-    log.error(error.message);
+    log.error('MongoDB connection failed:', error.message);
     throw error;
   }
 };
-
-export default connectDB;
