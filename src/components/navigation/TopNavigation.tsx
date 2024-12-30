@@ -1,10 +1,10 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Users, Settings, UserCircle } from 'lucide-react';
+import { FileText, LogOut } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 const TopNavigation = () => {
   const location = useLocation();
-  const { user, isAuthenticated } = useAuth();
+  const { logout, isAuthenticated } = useAuth();
 
   const isActive = (path: string) => 
     location.pathname === path ? 'text-emerald-600' : 'text-gray-600';
@@ -15,34 +15,22 @@ const TopNavigation = () => {
 
   return (
     <nav className="bg-white shadow-md py-2 sticky top-0 z-50">
-      <div className="max-w-[425px] mx-auto grid grid-cols-3 gap-2">
-        {user?.role === 'admin' && (
-          <Link 
-            to="/users" 
-            className={`flex flex-col items-center justify-center ${isActive('/users')}`}
-          >
-            <Users size={20} />
-            <span className="text-xs mt-1">Users</span>
-          </Link>
-        )}
-        
-        {user?.role === 'admin' && (
-          <Link 
-            to="/sensors" 
-            className={`flex flex-col items-center justify-center ${isActive('/sensors')}`}
-          >
-            <Settings size={20} />
-            <span className="text-xs mt-1">Sensors</span>
-          </Link>
-        )}
-        
+      <div className="max-w-[425px] mx-auto flex justify-end items-center gap-4 px-4">
         <Link 
-          to="/profile" 
-          className={`flex flex-col items-center justify-center ${isActive('/profile')}`}
+          to="/export" 
+          className={`flex items-center gap-2 ${isActive('/export')}`}
         >
-          <UserCircle size={20} />
-          <span className="text-xs mt-1">Profile</span>
+          <FileText size={20} />
+          <span>Export Report</span>
         </Link>
+        
+        <button
+          onClick={logout}
+          className="flex items-center gap-2 text-red-500 hover:text-red-600"
+        >
+          <LogOut size={20} />
+          <span>Logout</span>
+        </button>
       </div>
     </nav>
   );
