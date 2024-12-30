@@ -1,102 +1,71 @@
-import express from 'express';
+import { Router } from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import { log } from '../utils/logger.js';
 
-const router = express.Router();
+const router = Router();
 
-// Register endpoint
-router.post('/register', async (req, res) => {
-  try {
-    const { username, email, password, role, phone } = req.body;
-    
-    if (!username || !email || !password) {
-      return res.status(400).json({
-        message: 'Username, email, and password are required'
-      });
-    }
-
-    // Check if user already exists
-    const existingUser = await User.findOne({
-      $or: [{ email }, { username }]
-    });
-
-    if (existingUser) {
-      return res.status(400).json({
-        message: 'User with this email or username already exists'
-      });
-    }
-
-    // Create new user
-    const user = new User({
-      username,
-      email,
-      password,
-      role: role || 'user',
-      phone
-    });
-
-    await user.save();
-    log.success(`New user registered: ${username}`);
-
-    res.status(201).json({
-      message: 'Registration successful',
-      user: {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        role: user.role,
-        phone: user.phone
-      }
-    });
-  } catch (error) {
-    log.error('Registration error:', error);
-    res.status(500).json({
-      message: 'Registration failed. Please try again.'
-    });
-  }
-});
-
-// Login endpoint
+// Login route
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    
+
     if (!email || !password) {
-      return res.status(400).json({ 
-        message: 'Email and password are required' 
-      });
+      return res.status(400).json({ message: 'Email and password are required' });
     }
 
     const user = await User.findOne({ email });
-    
     if (!user || !(await user.comparePassword(password))) {
-      return res.status(401).json({ 
-        message: 'Invalid email or password' 
-      });
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
-    
+
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: '24h' }
     );
-    
+
     res.json({
       token,
       user: {
         id: user._id,
         username: user.username,
         email: user.email,
-        role: user.role,
-        phone: user.phone
+        role: user.role
       }
     });
   } catch (error) {
     log.error('Login error:', error);
-    res.status(500).json({ 
-      message: 'Login failed. Please try again.' 
+    res.status(500).json({ message: 'Login failed' });
+  }
+});
+
+// Register route
+router.post('/register', async (req, res) => {
+  try {
+    const { username, email, password, role } = req.body;
+    
+    const user = new User({ username, email, password, role });
+    await user.save();
+
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    res.status(201).json({
+      token,
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        role: user.role
+      }
     });
+  } catch (error) {
+    log.error('Registration error:', error);
+    res.status(500).json({ message: 'Registration failed' });
   }
 });
 
