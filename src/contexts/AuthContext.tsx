@@ -1,12 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthState, User, RegisterData } from '../types/auth';
+import { AuthState, User } from '../types/auth';
 import * as authApi from '../services/api/auth';
 import * as authStorage from '../services/storage/auth';
 
 interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<void>;
-  register: (userData: RegisterData) => Promise<void>;
   logout: () => void;
   updateUserData: (user: User) => void;
 }
@@ -32,11 +31,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     initAuth();
   }, []);
 
-  const updateUserData = (user: User) => {
-    setState(prev => ({ ...prev, user }));
-    authStorage.setUser(user);
-  };
-
   const login = async (email: string, password: string) => {
     try {
       const { token, user } = await authApi.login({ email, password });
@@ -49,22 +43,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
       navigate(user.role === 'admin' ? '/admin' : '/dashboard');
     } catch (error) {
-      if (error instanceof Error) {
-        throw error;
-      }
-      throw new Error('Login failed');
-    }
-  };
-
-  const register = async (userData: RegisterData) => {
-    try {
-      const response = await authApi.register(userData);
-      return response;
-    } catch (error) {
-      if (error instanceof Error) {
-        throw error;
-      }
-      throw new Error('Registration failed');
+      throw error;
     }
   };
 
@@ -78,16 +57,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     navigate('/login');
   };
 
-  const value = {
-    ...state,
-    login,
-    register,
-    logout,
-    updateUserData
+  const updateUserData = (user: User) => {
+    setState(prev => ({ ...prev, user }));
+    authStorage.setUser(user);
   };
 
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={{ ...state, login, logout, updateUserData }}>
       {children}
     </AuthContext.Provider>
   );
