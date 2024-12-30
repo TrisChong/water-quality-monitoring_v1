@@ -1,9 +1,30 @@
 services:
+  # Frontend web service
   - type: web
-    name: water-quality-monitoring
+    name: water-quality-monitoring-frontend
     env: static
     buildCommand: npm ci && npm run build
     staticPublishPath: ./dist
     envVars:
       - key: NODE_VERSION
-        value: 18.x
+        value: 18
+      - key: VITE_API_URL
+        value: https://water-quality-monitoring-api.onrender.com/api
+
+  # Backend API service  
+  - type: web
+    name: water-quality-monitoring-api
+    env: node
+    buildCommand: npm ci
+    startCommand: npm run server
+    envVars:
+      - key: NODE_VERSION
+        value: 18
+      - key: PORT
+        sync: false
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET  
+        sync: false
+      - key: CLIENT_URL
+        value: https://water-quality-monitoring.onrender.com

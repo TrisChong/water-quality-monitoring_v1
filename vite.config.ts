@@ -7,10 +7,17 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'https://water-quality-monitoring-api.onrender.com',
-        changeOrigin: true,
-        secure: false
+        target: 'http://localhost:5000',
+        changeOrigin: true
+      },
+      '/socket.io': {
+        target: 'http://localhost:5000',
+        ws: true
       }
     }
+  },
+  build: {
+    outDir: 'dist',
+    sourcemap: true
   }
 });
