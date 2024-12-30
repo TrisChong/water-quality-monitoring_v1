@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
-import { FileText, Download, AlertCircle } from 'lucide-react';
-import { exportReadings } from '../../../services/api/reports';
+import { FileText, AlertCircle } from 'lucide-react';
+import { exportReadings } from '../../../services/export/exportService';
+import { downloadBlob } from '../../../utils/download';
 import BackButton from '../../common/BackButton';
+import { format } from 'date-fns';
 
 const DataExport = () => {
   const [dateRange, setDateRange] = useState({
-    start: '',
-    end: ''
+    startDate: format(new Date(), 'yyyy-MM-dd'),
+    endDate: format(new Date(), 'yyyy-MM-dd')
   });
   const [isExporting, setIsExporting] = useState(false);
   const [error, setError] = useState('');
 
   const handleExport = async () => {
-    if (!dateRange.start || !dateRange.end) {
+    if (!dateRange.startDate || !dateRange.endDate) {
       setError('Please select both start and end dates');
       return;
     }
@@ -20,30 +22,21 @@ const DataExport = () => {
     try {
       setIsExporting(true);
       setError('');
-      const blob = await exportReadings(dateRange.start, dateRange.end);
-      
-      // Create download link
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `water-quality-report-${dateRange.start}-to-${dateRange.end}.xlsx`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
+      const { data, filename } = await exportReadings(dateRange);
+      downloadBlob(data, filename);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to export report');
+      setError(err instanceof Error ? err.message : 'Failed to export data');
     } finally {
       setIsExporting(false);
     }
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <div className="flex justify-between items-center mb-6">
+    <div className="p-4">
+      <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <FileText className="h-6 w-6 text-emerald-500" />
-          <h2 className="text-2xl font-bold">Export Report</h2>
+          <h2 className="text-xl font-bold">Export Report</h2>
         </div>
         <BackButton />
       </div>
@@ -56,17 +49,18 @@ const DataExport = () => {
       )}
 
       <div className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Start Date
             </label>
             <input
               type="date"
-              value={dateRange.start}
-              onChange={(e) => setDateRange(prev => ({...prev, start: e.target.value}))}
-              className="w-full p-2 border rounded-md focus:ring-2 focus:ring-emerald-400"
+              value={dateRange.startDate}
+              onChange={(e) => setDateRange(prev => ({ ...prev, startDate: e.target.value }))}
+              className="w-full p-2 border rounded focus:ring-2 focus:ring-emerald-400"
               disabled={isExporting}
+              max={dateRange.endDate}
             />
           </div>
           <div>
@@ -75,20 +69,21 @@ const DataExport = () => {
             </label>
             <input
               type="date"
-              value={dateRange.end}
-              onChange={(e) => setDateRange(prev => ({...prev, end: e.target.value}))}
-              className="w-full p-2 border rounded-md focus:ring-2 focus:ring-emerald-400"
+              value={dateRange.endDate}
+              onChange={(e) => setDateRange(prev => ({ ...prev, endDate: e.target.value }))}
+              className="w-full p-2 border rounded focus:ring-2 focus:ring-emerald-400"
               disabled={isExporting}
+              min={dateRange.startDate}
             />
           </div>
         </div>
 
         <button
           onClick={handleExport}
-          disabled={isExporting || !dateRange.start || !dateRange.end}
-          className="flex items-center gap-2 px-4 py-2 bg-emerald-500 text-white rounded-md hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={isExporting || !dateRange.startDate || !dateRange.endDate}
+          className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-emerald-500 text-white rounded hover:bg-emerald-600 disabled:opacity-50"
         >
-          <Download size={20} />
+          <FileText size={20} />
           {isExporting ? 'Exporting...' : 'Export to Excel'}
         </button>
       </div>
