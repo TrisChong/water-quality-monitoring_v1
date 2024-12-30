@@ -32,26 +32,26 @@ const SensorReadingCard: React.FC<SensorReadingCardProps> = ({
   const getIcon = () => {
     switch (type) {
       case 'tds':
-        return <Droplet className="h-8 w-8 text-blue-500" />;
+        return <Droplet className="h-6 w-6 text-blue-500" />;
       case 'ph':
-        return <Activity className="h-8 w-8 text-purple-500" />;
+        return <Activity className="h-6 w-6 text-purple-500" />;
       case 'turbidity':
-        return <Thermometer className="h-8 w-8 text-yellow-500" />;
+        return <Thermometer className="h-6 w-6 text-yellow-500" />;
       case 'flowRate':
-        return <Wind className="h-8 w-8 text-green-500" />;
+        return <Wind className="h-6 w-6 text-green-500" />;
     }
   };
 
   return (
-    <div className="p-4 bg-white rounded-lg shadow-md">
+    <div className="bg-white rounded-lg shadow-md p-4">
       <div className="flex items-center justify-between mb-2">
-        <h3 className="font-semibold">{title}</h3>
+        <h3 className="font-semibold text-sm">{title}</h3>
         {getIcon()}
       </div>
-      <p className={`text-2xl font-bold ${getStatusColor(status)}`}>
+      <p className={`text-xl font-bold ${getStatusColor(status)}`}>
         {value !== null ? `${value} ${unit}` : '---'}
       </p>
-      <p className={`text-sm ${getStatusColor(status)}`}>
+      <p className={`text-xs ${getStatusColor(status)}`}>
         Status: {status}
       </p>
     </div>

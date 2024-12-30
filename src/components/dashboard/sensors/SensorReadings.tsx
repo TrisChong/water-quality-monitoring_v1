@@ -8,7 +8,7 @@ interface SensorReadingsProps {
 
 const SensorReadings: React.FC<SensorReadingsProps> = ({ data }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="space-y-4 max-w-[425px] mx-auto">
       <SensorReadingCard
         title="TDS Level"
         value={data?.tdsLevel ?? null}
@@ -39,9 +39,9 @@ const SensorReadings: React.FC<SensorReadingsProps> = ({ data }) => {
       />
 
       {data?.status === 'Alarm' && (
-        <div className="col-span-full bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
           <strong className="font-bold">Alert!</strong>
-          <span className="block sm:inline"> Water quality parameters outside safe range. Please check the system.</span>
+          <span className="block"> Water quality parameters outside safe range.</span>
         </div>
       )}
     </div>
