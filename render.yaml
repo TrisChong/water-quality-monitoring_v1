@@ -16,7 +16,7 @@ services:
     name: water-quality-monitoring-api
     env: node
     buildCommand: npm ci
-    startCommand: npm run server
+    startCommand: npm start
     envVars:
       - key: NODE_VERSION
         value: 18
