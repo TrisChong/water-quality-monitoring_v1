@@ -1,34 +1,25 @@
-import express from 'express';
-import { corsMiddleware } from '../middleware/cors.js';
-import { errorHandler } from '../middleware/errorHandler.js';
-import routes from '../routes/index.js';
-import { log } from '../utils/logger.js';
+[build]
+  command = "npm run build"
+  publish = "dist"
 
-const createApp = () => {
-  const app = express();
-  
-  // Middleware
-  app.use(express.json());
-  app.use(corsMiddleware);
-  
-  // Routes
-  app.use('/api', routes);
-  
-  // Health check
-  app.get('/health', (_, res) => {
-    res.json({ status: 'ok' });
-  });
-  
-  // Handle 404
-  app.use((req, res) => {
-    log.warn(`Route not found: ${req.method} ${req.url}`);
-    res.status(404).json({ message: 'Route not found' });
-  });
-  
-  // Error handling
-  app.use(errorHandler);
-  
-  return app;
-};
+[[redirects]]
+  from = "/api/*"
+  to = "https://water-quality-monitoring-v1.onrender.com/api/:splat"
+  status = 200
+  force = true
+  headers = {Access-Control-Allow-Origin = "*"}
 
-export default createApp;
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[build.environment]
+  NODE_VERSION = "18"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+    Access-Control-Allow-Headers = "Origin, X-Requested-With, Content-Type, Accept, Authorization"
