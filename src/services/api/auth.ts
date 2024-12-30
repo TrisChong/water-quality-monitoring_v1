@@ -3,7 +3,10 @@ import { API_CONFIG, ENDPOINTS } from '../../config/api';
 import { LoginCredentials } from '../../types/auth';
 import { handleApiError } from '../utils/errorHandler';
 
-const api = axios.create(API_CONFIG);
+const api = axios.create({
+  ...API_CONFIG,
+  withCredentials: true
+});
 
 export const login = async (credentials: LoginCredentials) => {
   try {
