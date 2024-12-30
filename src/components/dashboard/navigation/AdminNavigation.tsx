@@ -19,35 +19,35 @@ const AdminNavigation = () => {
             to="/admin" 
             className={`flex items-center space-x-2 ${isActive('/admin')} hover:text-emerald-700`}
           >
-            <Activity size={20} />
+            <Activity size={10} />
             <span>Dashboard</span>
           </Link>
           <Link 
             to="/admin/users" 
             className={`flex items-center space-x-2 ${isActive('/admin/users')} hover:text-emerald-700`}
           >
-            <Users size={20} />
+            <Users size={10} />
             <span>Users</span>
           </Link>
           <Link 
             to="/admin/sensors" 
             className={`flex items-center space-x-2 ${isActive('/admin/sensors')} hover:text-emerald-700`}
           >
-            <Settings size={20} />
+            <Settings size={10} />
             <span>Sensors</span>
           </Link>
           <Link 
             to="/admin/profile" 
             className={`flex items-center space-x-2 ${isActive('/admin/profile')} hover:text-emerald-700`}
           >
-            <UserCircle size={20} />
+            <UserCircle size={10} />
             <span>Profile</span>
           </Link>
           <Link 
             to="/admin/export" 
             className={`flex items-center space-x-2 ${isActive('/admin/export')} hover:text-emerald-700`}
           >
-            <FileText size={20} />
+            <FileText size={10} />
             <span>Export</span>
           </Link>
         </div>
@@ -55,7 +55,7 @@ const AdminNavigation = () => {
           onClick={logout}
           className="flex items-center space-x-2 text-red-500 hover:text-red-600"
         >
-          <LogOut size={20} />
+          <LogOut size={10} />
           <span>Logout</span>
         </button>
       </div>
