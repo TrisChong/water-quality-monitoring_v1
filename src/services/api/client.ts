@@ -1,11 +1,18 @@
 import axios from 'axios';
 import { API_CONFIG } from '../../config/api';
 
-const api = axios.create(API_CONFIG);
+// Create API client instance
+export const apiClient = axios.create({
+  ...API_CONFIG,
+  withCredentials: false // Disable credentials for now
+});
 
-// Request interceptor
-api.interceptors.request.use(
+// Add request interceptor
+apiClient.interceptors.request.use(
   (config) => {
+    // Add CORS headers
+    config.headers['Access-Control-Allow-Origin'] = '*';
+    
     const token = localStorage.getItem('auth_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -15,8 +22,8 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor
-api.interceptors.response.use(
+// Add response interceptor
+apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (!error.response) {
@@ -26,16 +33,13 @@ api.interceptors.response.use(
     // Handle specific error cases
     switch (error.response.status) {
       case 401:
-        localStorage.removeItem('auth_token');
-        localStorage.removeItem('auth_user');
-        window.location.href = '/login';
-        return Promise.reject(new Error('Session expired. Please login again.'));
+        return Promise.reject(new Error('Invalid email or password'));
       case 403:
         return Promise.reject(new Error('Access denied'));
+      case 404:
+        return Promise.reject(new Error('Service not found'));
       default:
         return Promise.reject(error.response.data?.message || 'An error occurred');
     }
   }
 );
-
-export default api;

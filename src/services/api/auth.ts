@@ -1,20 +1,18 @@
-import api from './axios';
-import { LoginCredentials, RegisterData } from '../../types/auth';
+import axios from 'axios';
+import { API_CONFIG } from '../../config/api';
+import { LoginCredentials } from '../../types/auth';
+import { handleApiError } from '../utils/errorHandler';
+
+const api = axios.create({
+  ...API_CONFIG,
+  withCredentials: true
+});
 
 export const login = async (credentials: LoginCredentials) => {
   try {
     const response = await api.post('/auth/login', credentials);
     return response.data;
-  } catch (error: any) {
-    throw new Error(error.message || 'Login failed');
-  }
-};
-
-export const register = async (userData: RegisterData) => {
-  try {
-    const response = await api.post('/auth/register', userData);
-    return response.data;
-  } catch (error: any) {
-    throw new Error(error.message || 'Registration failed');
+  } catch (error) {
+    throw handleApiError(error);
   }
 };
