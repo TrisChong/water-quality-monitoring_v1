@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Activity, Users, Settings, UserCircle } from 'lucide-react';
+import { Users, Settings, UserCircle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 const TopNavigation = () => {
@@ -15,15 +15,7 @@ const TopNavigation = () => {
 
   return (
     <nav className="bg-white shadow-md py-2 sticky top-0 z-50">
-      <div className="max-w-[425px] mx-auto grid grid-cols-4 gap-2">
-        <Link 
-          to="/dashboard" 
-          className={`flex flex-col items-center justify-center ${isActive('/dashboard')}`}
-        >
-          <Activity size={20} />
-          <span className="text-xs mt-1">Dashboard</span>
-        </Link>
-        
+      <div className="max-w-[425px] mx-auto grid grid-cols-3 gap-2">
         {user?.role === 'admin' && (
           <Link 
             to="/users" 
