@@ -1,6 +1,5 @@
 import { Server } from 'socket.io';
 import { log } from '../utils/logger.js';
-import { handleSensorData } from '../services/sensorService.js';
 import { verifyToken } from '../middleware/auth.js';
 
 export const configureSocket = (httpServer) => {
@@ -11,7 +10,6 @@ export const configureSocket = (httpServer) => {
     }
   });
 
-  // Socket authentication middleware
   io.use((socket, next) => {
     const token = socket.handshake.auth.token;
     if (!token) {
@@ -28,14 +26,10 @@ export const configureSocket = (httpServer) => {
   });
 
   io.on('connection', (socket) => {
-    log.success(`Client connected: ${socket.user.username}`);
+    log.success(`Client connected: ${socket.id}`);
     
-    // Start sensor data emission for authenticated user
-    const interval = handleSensorData(socket);
-
     socket.on('disconnect', () => {
-      clearInterval(interval);
-      log.warn(`Client disconnected: ${socket.user.username}`);
+      log.warn(`Client disconnected: ${socket.id}`);
     });
   });
 
