@@ -10,34 +10,46 @@ const TopNavigation = () => {
     location.pathname === path ? 'text-emerald-600' : 'text-gray-600';
 
   if (!isAuthenticated) {
-    return null; // Don't show navigation when not authenticated
+    return null;
   }
 
   return (
-    <nav className="bg-white shadow-md p-2 sticky top-0 z-50">
-      <div className="flex justify-between items-center max-w-[425px] mx-auto">
-        <Link to="/dashboard" className={`flex flex-col items-center ${isActive('/dashboard')}`}>
+    <nav className="bg-white shadow-md py-2 sticky top-0 z-50">
+      <div className="max-w-[425px] mx-auto grid grid-cols-4 gap-2">
+        <Link 
+          to="/dashboard" 
+          className={`flex flex-col items-center justify-center ${isActive('/dashboard')}`}
+        >
           <Activity size={20} />
-          <span className="text-xs">Dashboard</span>
+          <span className="text-xs mt-1">Dashboard</span>
         </Link>
         
         {user?.role === 'admin' && (
-          <Link to="/users" className={`flex flex-col items-center ${isActive('/users')}`}>
+          <Link 
+            to="/users" 
+            className={`flex flex-col items-center justify-center ${isActive('/users')}`}
+          >
             <Users size={20} />
-            <span className="text-xs">Users</span>
+            <span className="text-xs mt-1">Users</span>
           </Link>
         )}
         
         {user?.role === 'admin' && (
-          <Link to="/sensors" className={`flex flex-col items-center ${isActive('/sensors')}`}>
+          <Link 
+            to="/sensors" 
+            className={`flex flex-col items-center justify-center ${isActive('/sensors')}`}
+          >
             <Settings size={20} />
-            <span className="text-xs">Sensors</span>
+            <span className="text-xs mt-1">Sensors</span>
           </Link>
         )}
         
-        <Link to="/profile" className={`flex flex-col items-center ${isActive('/profile')}`}>
+        <Link 
+          to="/profile" 
+          className={`flex flex-col items-center justify-center ${isActive('/profile')}`}
+        >
           <UserCircle size={20} />
-          <span className="text-xs">Profile</span>
+          <span className="text-xs mt-1">Profile</span>
         </Link>
       </div>
     </nav>
